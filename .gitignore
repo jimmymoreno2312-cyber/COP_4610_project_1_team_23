@@ -1,0 +1,10 @@
+# Build output (the rubric deducts for committed binaries)
+bin/
+obj/
+*.o
+*.d
+
+# Editor / OS files
+.DS_Store
+.vscode/
+*.swp
