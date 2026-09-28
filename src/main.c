@@ -25,7 +25,8 @@ int main(void)
         if (tokens != NULL && tokens->size > 0) {
             expand_tokens(tokens);
 
-            pipeline *p = parse_pipeline(tokens, input);
+            /* A line of only unset variables expands to nothing. */
+            pipeline *p = tokens->size > 0 ? parse_pipeline(tokens, input) : NULL;
             if (p != NULL) {
                 int status = is_builtin(p) ? run_builtin(p) : run_pipeline(p);
                 if (status == 0)

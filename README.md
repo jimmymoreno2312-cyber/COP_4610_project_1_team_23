@@ -126,6 +126,7 @@ Each member records their contributions here.
 | Date       | Work Completed / Notes |
 |------------|------------------------|
 | 2026-09-27 | Set up the repository, Makefile, and modular project skeleton. |
+| 2026-09-28 | Implemented environment variable expansion (Part 2). |
 
 ### Sarah Fieg
 
