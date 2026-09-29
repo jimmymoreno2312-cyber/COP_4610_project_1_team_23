@@ -13,4 +13,10 @@ int open_input_file(const char *path);
  */
 int open_output_file(const char *path);
 
+/*
+ * Child side: makes in_fd the new stdin and out_fd the new stdout (-1 = leave as is),
+ * then closes the originals. Returns 0 on success, -1 on failure.
+ */
+int apply_redirection(int in_fd, int out_fd);
+
 #endif

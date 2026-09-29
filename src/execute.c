@@ -24,7 +24,8 @@ int run_pipeline(pipeline *p)
      *  3. For i in 0..N-1: pipe() if i < N-1, then fork(). In the child:
      *       - stdin  = input file (i == 0) or previous pipe's read end
      *       - stdout = output file (i == N-1) or this pipe's write end
-     *       - dup2() these, close every other pipe/file fd, then exec_command().
+     *       - apply_redirection(in_fd, out_fd) does the dup2() for files; use dup2()
+     *         for pipe ends, close every other pipe/file fd, then exec_command().
      *     The parent closes the pipe ends it no longer needs.
      *  4. The parent closes the redirect fds, then either:
      *       - foreground: waitpid() on every child
