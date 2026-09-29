@@ -77,11 +77,10 @@ int run_pipeline(pipeline *p)
 
 void exec_command(const char *path, const simple_cmd *cmd)
 {
-    /*
-     * TODO(Pedro): execv(path, cmd->argv). If it returns, print the error
-     * with perror() and _exit(EXIT_FAILURE). Only execv() is allowed.
-     */
-    (void)path;
-    (void)cmd;
+    /* argv[0] stays as the name the user typed; path is the resolved executable. */
+    execv(path, cmd->argv);
+
+    /* execv only returns on failure. _exit skips the parent's stdio buffers. */
+    fprintf(stderr, "%s: %s\n", cmd->argv[0], strerror(errno));
     _exit(EXIT_FAILURE);
 }

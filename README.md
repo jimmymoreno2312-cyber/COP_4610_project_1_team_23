@@ -120,6 +120,7 @@ Each member records their contributions here.
 | Date       | Work Completed / Notes |
 |------------|------------------------|
 | 2026-09-28 | Added pipe helpers to `execute.c` (Parts 5 & 7): `close_pipes()` and `run_child()`, which connects each child to its neighboring pipes, applies redirection, and execs. |
+| 2026-09-28 | Implemented `exec_command()` (Part 5): runs the resolved path with `execv()`, keeping the typed name as `argv[0]`; on failure prints `<cmd>: <error>` and exits with `_exit()`. |
 
 ### Jimmy Moreno
 
