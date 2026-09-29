@@ -15,10 +15,6 @@
 #include "path_search.h"
 #include "redirect.h"
 
-/* The base assignment allows at most two pipes, i.e. three commands. */
-#define MAX_PIPES 2
-#define MAX_PIPE_CMDS (MAX_PIPES + 1)
-
 static void close_pipes(int pipes[][2], int num_pipes)
 {
     for (int i = 0; i < num_pipes; i++) {
@@ -72,22 +68,25 @@ static char *job_cmdline(const char *cmdline)
 int run_pipeline(pipeline *p)
 {
     int n = p->num_cmds;
-    char *paths[MAX_PIPE_CMDS] = {NULL};
-    pid_t pids[MAX_PIPE_CMDS];
-    int pipes[MAX_PIPES][2];
     int num_pipes = 0;
     int num_forked = 0;
     int in_fd = -1;
     int out_fd = -1;
     int result = -1;
 
-    if (n > MAX_PIPE_CMDS) {
-        fprintf(stderr, "error: at most %d pipes are supported\n", MAX_PIPES);
-        return -1;
-    }
     if (n > 1 && (p->input_file != NULL || p->output_file != NULL)) {
         fprintf(stderr, "error: piping and I/O redirection together is not supported\n");
         return -1;
+    }
+
+    /* Sized to the pipeline, so any number of pipes works (n - 1 may be 0). */
+    char **paths = calloc(n, sizeof(char *));
+    pid_t *pids = malloc(n * sizeof(pid_t));
+    int (*pipes)[2] = malloc((n > 1 ? n - 1 : 1) * sizeof(int[2]));
+
+    if (paths == NULL || pids == NULL || pipes == NULL) {
+        perror("malloc");
+        goto cleanup;
     }
 
     /* Resolve every command before forking so a typo doesn't start half a pipeline. */
@@ -142,13 +141,18 @@ int run_pipeline(pipeline *p)
         result = 0;
 
 cleanup:
-    close_pipes(pipes, num_pipes);
+    if (pipes != NULL)
+        close_pipes(pipes, num_pipes);
     if (in_fd != -1)
         close(in_fd);
     if (out_fd != -1)
         close(out_fd);
-    for (int i = 0; i < n; i++)
-        free(paths[i]);
+    if (paths != NULL)
+        for (int i = 0; i < n; i++)
+            free(paths[i]);
+    free(paths);
+    free(pids);
+    free(pipes);
     return result;
 }
 

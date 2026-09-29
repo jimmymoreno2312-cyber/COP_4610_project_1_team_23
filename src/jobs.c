@@ -6,12 +6,10 @@
 #include <string.h>
 #include <sys/wait.h>
 
-#define MAX_PIDS 10
-
 /* One background job: every pid in its pipeline plus the original command line. */
 struct job {
     int num;
-    pid_t pids[MAX_PIDS];
+    pid_t *pids;  /* one per command, so pipelines of any length fit */
     int num_pids;
     char *cmdline;
     bool active;
@@ -31,6 +29,10 @@ void jobs_add(const pid_t *pids, int num_pids, const char *cmdline)
         }
     }
     if (space == -1)
+        return;
+
+    table[space].pids = malloc(num_pids * sizeof(pid_t));
+    if (table[space].pids == NULL)
         return;
 
     table[space].num = next_job_num;
@@ -63,6 +65,7 @@ void jobs_check(void)
             int last = table[i].num_pids - 1;
             printf("[%d] + %d done %s\n", table[i].num, table[i].pids[last], table[i].cmdline);
             free(table[i].cmdline);
+            free(table[i].pids);
             table[i].active = false;
         }
     }
@@ -93,6 +96,7 @@ void jobs_wait_all(void)
             waitpid(table[i].pids[j], &status, 0);
         }
         free(table[i].cmdline);
+        free(table[i].pids);
         table[i].active = false;
     }
 }

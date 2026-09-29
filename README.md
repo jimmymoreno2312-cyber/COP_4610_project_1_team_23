@@ -125,6 +125,7 @@ Each member records their contributions here.
 | 2026-09-28 | Implemented environment variable expansion (Part 2). |
 | 2026-09-28 | Implemented I/O redirection file handling (Part 6). |
 | 2026-09-28 | Implemented run_pipeline: piping with up to two pipes (Part 7). |
+| 2026-09-28 | Extra credit 1: unlimited pipes (dynamic arrays in `run_pipeline()` and `jobs.c`). |
 
 ### Sarah Fieg
 
@@ -144,7 +145,11 @@ Document in-person meetings, their purpose, and what was discussed.
 - None known. All base features were tested locally (macOS); final testing is on linprog.
 
 ## Extra Credit
-- **Extra Credit 1:**: Unlimited number of pipes (not finished yet)
+- **Extra Credit 1: Unlimited number of pipes** (Jimmy): `run_pipeline()` in `src/execute.c`
+  sizes its pipe, PID, and path arrays from the number of commands, so a pipeline can have any
+  number of pipes, e.g. `cat in.txt | sort | uniq | sort -r | head -2 | wc -l`. The background
+  job table in `src/jobs.c` also stores each job's PIDs in a dynamic array, so long pipelines
+  work with `&` too.
 - **Extra Credit 2:**: Piping and I/O redirection combined (not finished yet)
 - **Extra Credit 3:**: Shell-ception (not finished yet)
 
@@ -157,8 +162,8 @@ Document in-person meetings, their purpose, and what was discussed.
   only the last one if there were fewer than three, or `No valid commands.`
 - A "valid command" is one that started successfully: unknown commands, bad redirection
   files, and failed `cd` calls are not recorded.
-- At most two pipes are accepted. Combining pipes with `<`/`>` is rejected with an error,
-  since the base assignment says they will not occur together.
+- Any number of pipes is accepted (extra credit 1). Combining pipes with `<`/`>` is rejected
+  with an error, since the base assignment says they will not occur together.
 - An unset variable (e.g. `echo $NOPE`) expands to nothing and its token is dropped, as in bash.
 - If `$MACHINE` is not set, the prompt falls back to `gethostname()`.
 - Output files from `>` are always left with permissions `-rw-------`, even if they already
@@ -172,5 +177,5 @@ Document in-person meetings, their purpose, and what was discussed.
   reviewed and understood before committing.
 - **Jimmy Moreno**: Used Claude Code to generate the project skeleton (Makefile, lexer, parser,
   and module stubs), environment variable expansion, I/O redirection, `exec_command()`, and
-  `run_pipeline()` with its pipe helpers (`close_pipes()` and `run_child()`). All generated
-  code was reviewed and tested before committing.
+  `run_pipeline()` with its pipe helpers (`close_pipes()` and `run_child()`), and extra
+  credit 1 (unlimited pipes). All generated code was reviewed and tested before committing.
