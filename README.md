@@ -126,6 +126,7 @@ Each member records their contributions here.
 | 2026-09-28 | Implemented I/O redirection file handling (Part 6). |
 | 2026-09-28 | Implemented run_pipeline: piping with up to two pipes (Part 7). |
 | 2026-09-28 | Extra credit 1: unlimited pipes (dynamic arrays in `run_pipeline()` and `jobs.c`). |
+| 2026-09-28 | Extra credit 2: piping combined with I/O redirection. |
 
 ### Sarah Fieg
 
@@ -150,7 +151,11 @@ Document in-person meetings, their purpose, and what was discussed.
   number of pipes, e.g. `cat in.txt | sort | uniq | sort -r | head -2 | wc -l`. The background
   job table in `src/jobs.c` also stores each job's PIDs in a dynamic array, so long pipelines
   work with `&` too.
-- **Extra Credit 2:**: Piping and I/O redirection combined (not finished yet)
+- **Extra Credit 2: Piping and I/O redirection combined** (Jimmy): `<` gives its file to the
+  first command and `>` sends the last command's output to its file, e.g.
+  `sort < in.txt | uniq -c | sort -rn > out.txt`. `run_child()` in `src/execute.c` keeps the
+  files open only in the first and last commands. The parser in `src/command.c` rejects `<`
+  after the first command and `>` before the last.
 - **Extra Credit 3:**: Shell-ception (not finished yet)
 
 ## Considerations
@@ -162,8 +167,8 @@ Document in-person meetings, their purpose, and what was discussed.
   only the last one if there were fewer than three, or `No valid commands.`
 - A "valid command" is one that started successfully: unknown commands, bad redirection
   files, and failed `cd` calls are not recorded.
-- Any number of pipes is accepted (extra credit 1). Combining pipes with `<`/`>` is rejected
-  with an error, since the base assignment says they will not occur together.
+- Any number of pipes is accepted (extra credit 1), and pipes can be combined with `<` and `>`
+  (extra credit 2). In a pipeline, `<` must be on the first command and `>` on the last.
 - An unset variable (e.g. `echo $NOPE`) expands to nothing and its token is dropped, as in bash.
 - If `$MACHINE` is not set, the prompt falls back to `gethostname()`.
 - Output files from `>` are always left with permissions `-rw-------`, even if they already
@@ -178,4 +183,5 @@ Document in-person meetings, their purpose, and what was discussed.
 - **Jimmy Moreno**: Used Claude Code to generate the project skeleton (Makefile, lexer, parser,
   and module stubs), environment variable expansion, I/O redirection, `exec_command()`, and
   `run_pipeline()` with its pipe helpers (`close_pipes()` and `run_child()`), and extra
-  credit 1 (unlimited pipes). All generated code was reviewed and tested before committing.
+  credits 1 and 2 (unlimited pipes; piping with I/O redirection). All generated code was
+  reviewed and tested before committing.

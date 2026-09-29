@@ -40,7 +40,15 @@ static void run_child(int i, int n, int pipes[][2], int in_fd, int out_fd,
     }
     close_pipes(pipes, n - 1);
 
-    /* Redirection files are only opened for single commands (n == 1). */
+    /* Only the ends of the pipeline use the redirection files; the rest close them. */
+    if (i != 0 && in_fd != -1) {
+        close(in_fd);
+        in_fd = -1;
+    }
+    if (i != n - 1 && out_fd != -1) {
+        close(out_fd);
+        out_fd = -1;
+    }
     if (apply_redirection(in_fd, out_fd) == -1)
         _exit(EXIT_FAILURE);
 
@@ -73,11 +81,6 @@ int run_pipeline(pipeline *p)
     int in_fd = -1;
     int out_fd = -1;
     int result = -1;
-
-    if (n > 1 && (p->input_file != NULL || p->output_file != NULL)) {
-        fprintf(stderr, "error: piping and I/O redirection together is not supported\n");
-        return -1;
-    }
 
     /* Sized to the pipeline, so any number of pipes works (n - 1 may be 0). */
     char **paths = calloc(n, sizeof(char *));

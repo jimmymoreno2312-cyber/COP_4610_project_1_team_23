@@ -62,6 +62,11 @@ pipeline *parse_pipeline(const tokenlist *tokens, const char *cmdline)
         } else if (strcmp(tok, "<") == 0 || strcmp(tok, ">") == 0) {
             if (i + 1 >= num_tokens || is_operator(tokens->items[i + 1]))
                 return parse_error(p, "missing file name after redirection");
+            /* In a pipeline, input feeds the first command and output leaves the last. */
+            if (tok[0] == '<' && current != 0)
+                return parse_error(p, "'<' is only allowed on the first command");
+            if (tok[0] == '>' && current != p->num_cmds - 1)
+                return parse_error(p, "'>' is only allowed on the last command");
             char **target = (tok[0] == '<') ? &p->input_file : &p->output_file;
             free(*target);
             *target = strdup(tokens->items[++i]);
