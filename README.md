@@ -119,7 +119,7 @@ Each member records their contributions here.
 
 | Date       | Work Completed / Notes |
 |------------|------------------------|
-| YYYY-MM-DD | |
+| 2026-09-28 | Added pipe helpers to `execute.c` (Parts 5 & 7): `close_pipes()` and `run_child()`, which connects each child to its neighboring pipes, applies redirection, and execs. |
 
 ### Jimmy Moreno
 
