@@ -5,9 +5,9 @@ variable and tilde expansion, `$PATH` search, external command execution, I/O re
 piping, background jobs, and the built-ins `exit`, `cd`, and `jobs`.
 
 ## Group Members
-- **Pedro De Lana**: [school email]
-- **Jimmy Moreno**: [school email]
-- **Sarah Fieg**: [school email]
+- **Pedro De Lana**: pd23b@fsu.edu
+- **Jimmy Moreno**: jam23ba@fsu.edu
+- **Sarah Fieg**: sef21a@fsu.edu
 
 ## Division of Labor
 
@@ -112,6 +112,10 @@ Each member records their contributions here.
 | 2026-09-28 | Added pipe helpers `close_pipes()` and `run_child()` to `execute.c` (Parts 5 & 7). |
 | 2026-09-28 | Implemented `exec_command()` with `execv()` (Part 5). |
 | 2026-09-28 | Cleaned up source comments; restructured README to the course template. |
+| 2026-09-28 | Implemented the background job table in `jobs.c` (Part 8). |
+| 2026-09-28 | Hooked background jobs into `run_pipeline()`: `&`-free job names, flush before fork. |
+| 2026-09-28 | Implemented tilde expansion (Part 3), `cd`, and `exit` history (Part 9). |
+| 2026-09-28 | Matched prompt and job output formats to the sample runs. |
 
 ### Jimmy Moreno
 
@@ -133,16 +137,11 @@ Document in-person meetings, their purpose, and what was discussed.
 
 | Date       | Attendees | Topics Discussed | Outcomes / Decisions |
 |------------|-----------|------------------|----------------------|
-| YYYY-MM-DD | [Names]   | [Agenda items]   | [Actions/Next steps] |
+| 2026-09-20 | Pedro, Jimmy, Sarah | Weekly check-in (Sun 5 PM) | Reviewed progress; set next steps |
+| 2026-09-27 | Pedro, Jimmy, Sarah | Weekly check-in (Sun 5 PM) | Reviewed progress; set next steps |
 
 ## Bugs
-- None known yet.
-
-Unfinished portions (as of 2026-09-28):
-- `run_pipeline()` (Parts 5 & 7): prints "external commands not implemented yet".
-- `expand_tilde()` (Part 3): returns the token unchanged.
-- `cd`, command history, and `exit`'s last-three-commands output (Part 9).
-- Background job table in `jobs.c` (Part 8).
+- None known. All base features were tested locally (macOS); final testing is on linprog.
 
 ## Extra Credit
 - **Extra Credit 1:**: Unlimited number of pipes (not finished yet)
@@ -150,12 +149,24 @@ Unfinished portions (as of 2026-09-28):
 - **Extra Credit 3:**: Shell-ception (not finished yet)
 
 ## Considerations
+- Output formats follow the posted sample runs: background start `[1] 12345`, completion
+  `[1] + 12345 done sleep 3`, and `jobs` lines `[1] + 12345 running sleep 3`. Finished jobs
+  are reported after the next command is entered, before it runs.
+- Job listings show the command line without the trailing `&`.
+- `exit` waits for background jobs, then prints the last three valid commands (oldest first),
+  only the last one if there were fewer than three, or `No valid commands.`
+- A "valid command" is one that started successfully: unknown commands, bad redirection
+  files, and failed `cd` calls are not recorded.
+- At most two pipes are accepted. Combining pipes with `<`/`>` is rejected with an error,
+  since the base assignment says they will not occur together.
 - An unset variable (e.g. `echo $NOPE`) expands to nothing and its token is dropped, as in bash.
 - If `$MACHINE` is not set, the prompt falls back to `gethostname()`.
 - Output files from `>` are always left with permissions `-rw-------`, even if they already
   existed.
 
 ### Use of AI
-- **Pedro De Lana**: Used Claude Code to add `exec_command()` and the pipe helpers to
-  `execute.c`, clean up source comments, and format this README. All generated code was
+- **Pedro De Lana**: Used Claude Code as a learning aid to understand C and system calls
+  (`fork`, `execv`, `dup2`, `waitpid`) more proficiently, and to partially assist in writing
+  code (the `execute.c` helpers, tilde expansion, `cd`, and `exit` history). It was
+  also used to clean up source comments and format this README. All generated code was
   reviewed and understood before committing.

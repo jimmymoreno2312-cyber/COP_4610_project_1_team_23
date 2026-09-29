@@ -51,6 +51,24 @@ static void run_child(int i, int n, int pipes[][2], int in_fd, int out_fd,
     exec_command(path, cmd);
 }
 
+/* Job listings show the command line without its trailing "&". Caller frees. */
+static char *job_cmdline(const char *cmdline)
+{
+    char *copy = strdup(cmdline);
+    if (copy == NULL)
+        return NULL;
+
+    size_t len = strlen(copy);
+    while (len > 0 && (copy[len - 1] == ' ' || copy[len - 1] == '\t'))
+        len--;
+    if (len > 0 && copy[len - 1] == '&')
+        len--;
+    while (len > 0 && (copy[len - 1] == ' ' || copy[len - 1] == '\t'))
+        len--;
+    copy[len] = '\0';
+    return copy;
+}
+
 int run_pipeline(pipeline *p)
 {
     int n = p->num_cmds;
@@ -93,6 +111,9 @@ int run_pipeline(pipeline *p)
         }
     }
 
+    /* Flush first so buffered output isn't copied into (and repeated by) the children. */
+    fflush(NULL);
+
     for (; num_forked < n; num_forked++) {
         pid_t pid = fork();
         if (pid == -1) {
@@ -110,7 +131,9 @@ int run_pipeline(pipeline *p)
     num_pipes = 0;
 
     if (p->background && num_forked == n) {
-        jobs_add(pids, num_forked, p->cmdline);
+        char *cmdline = job_cmdline(p->cmdline);
+        jobs_add(pids, num_forked, cmdline != NULL ? cmdline : p->cmdline);
+        free(cmdline);
     } else {
         for (int i = 0; i < num_forked; i++)
             waitpid(pids[i], NULL, 0);

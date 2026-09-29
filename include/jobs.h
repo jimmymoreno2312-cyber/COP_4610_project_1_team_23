@@ -12,10 +12,10 @@
  */
 void jobs_add(const pid_t *pids, int num_pids, const char *cmdline);
 
-/* Non-blocking check. Prints "[job number] + done [cmdline]" for finished jobs. */
+/* Non-blocking check. Prints "[job number] + [pid] done [cmdline]" for finished jobs. */
 void jobs_check(void);
 
-/* Prints "[job number]+ [pid] [cmdline]" for each active job, or a message if none. */
+/* Prints "[job number] + [pid] running [cmdline]" per active job, or a message if none. */
 void jobs_list(void);
 
 /* Blocks until every background job has finished (used by exit). */

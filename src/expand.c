@@ -4,6 +4,7 @@
  */
 #include "expand.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -42,5 +43,14 @@ char *expand_env_var(const char *token)
 
 char *expand_tilde(const char *token)
 {
-    return strdup(token);
+    const char *home = getenv("HOME");
+    if (home == NULL)  /* caller keeps the token unchanged */
+        return NULL;
+
+    /* strlen(token) covers the rest of the token after '~' plus the terminator. */
+    size_t size = strlen(home) + strlen(token);
+    char *expanded = malloc(size);
+    if (expanded != NULL)
+        snprintf(expanded, size, "%s%s", home, token + 1);
+    return expanded;
 }

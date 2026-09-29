@@ -12,12 +12,14 @@
 int main(void)
 {
     while (1) {
-        jobs_check();
         print_prompt();
 
         char *input = get_input();
         if (input == NULL)  /* EOF (Ctrl-D) behaves like exit */
             builtin_exit();
+
+        /* Finished background jobs are reported before the next command runs. */
+        jobs_check();
 
         tokenlist *tokens = get_tokens(input);
         if (tokens != NULL && tokens->size > 0) {

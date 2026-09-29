@@ -28,6 +28,6 @@ void print_prompt(void)
             snprintf(cwd, sizeof cwd, "?"); 
         }
 
-    printf("%s@%s:%s> ", user, machine, cwd);
+    printf("%s@%s:%s>", user, machine, cwd);
     fflush(stdout);
 }
