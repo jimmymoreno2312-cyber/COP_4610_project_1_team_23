@@ -1,6 +1,8 @@
 # Build output (the rubric deducts for committed binaries)
-bin/
-obj/
+bin/*
+obj/*
+!bin/.gitkeep
+!obj/.gitkeep
 *.o
 *.d
 

@@ -5,15 +5,11 @@ variable and tilde expansion, `$PATH` search, external command execution, I/O re
 piping, background jobs, and the built-ins `exit`, `cd`, and `jobs`.
 
 ## Group Members
-
-- **Pedro De Lana**
-- **Jimmy Moreno**
-- **Sarah Fieg**
+- **Pedro De Lana**: [school email]
+- **Jimmy Moreno**: [school email]
+- **Sarah Fieg**: [school email]
 
 ## Division of Labor
-
-<!-- The rubric grades the division "after" the work: update this to reflect who actually
-     did what, not just the original plan. -->
 
 ### Part 1: Prompt
 - **Responsibilities**: Print `USER@MACHINE:PWD>` before each command.
@@ -52,16 +48,16 @@ piping, background jobs, and the built-ins `exit`, `cd`, and `jobs`.
 - **Assigned to**: Sarah, Pedro
 
 ### Extra Credit
-- **Unlimited number of pipes**: Jimmy
-- **Piping and I/O redirection combined**: Jimmy, Sarah
-- **Shell-ception**: Pedro
+- **Responsibilities**: Unlimited number of pipes; piping and I/O redirection combined;
+  shell-ception (running the shell inside itself).
+- **Assigned to**: Jimmy (unlimited pipes), Jimmy and Sarah (piping + redirection),
+  Pedro (shell-ception)
 
 ## File Listing
-
 ```
-.
-├── Makefile
-├── README.md
+root/
+├── bin/                # executable (bin/shell) is built here
+├── obj/                # object files are built here
 ├── include/
 │   ├── builtins.h
 │   ├── command.h
@@ -72,55 +68,50 @@ piping, background jobs, and the built-ins `exit`, `cd`, and `jobs`.
 │   ├── path_search.h
 │   ├── prompt.h
 │   └── redirect.h
-└── src/
-    ├── builtins.c      # Part 9: exit, cd, jobs
-    ├── command.c       # parses tokens into a pipeline (pipes, <, >, &)
-    ├── execute.c       # Parts 5 & 7: fork/execv and pipelines
-    ├── expand.c        # Parts 2 & 3: $VAR and ~ expansion
-    ├── jobs.c          # Part 8: background job table
-    ├── lexer.c         # reads input and splits it into tokens
-    ├── main.c          # read / expand / parse / execute loop
-    ├── path_search.c   # Part 4: $PATH search
-    ├── prompt.c        # Part 1: prompt
-    └── redirect.c      # Part 6: opening redirection files
+├── src/
+│   ├── builtins.c      # Part 9: exit, cd, jobs
+│   ├── command.c       # parses tokens into a pipeline (pipes, <, >, &)
+│   ├── execute.c       # Parts 5 & 7: fork/execv and pipelines
+│   ├── expand.c        # Parts 2 & 3: $VAR and ~ expansion
+│   ├── jobs.c          # Part 8: background job table
+│   ├── lexer.c         # reads input and splits it into tokens
+│   ├── main.c          # read / expand / parse / execute loop
+│   ├── path_search.c   # Part 4: $PATH search
+│   ├── prompt.c        # Part 1: prompt
+│   └── redirect.c      # Part 6: opening redirection files
+├── README.md
+└── Makefile
 ```
 
 ## How to Compile & Execute
 
 ### Requirements
-- **Compiler**: `gcc`
+- **Compiler**: `gcc` (C99)
 - **Environment**: linprog (any Linux system with `make` should also work)
 
 ### Compilation
 ```bash
 make
 ```
-This builds the executable at `bin/shell`. Use `make clean` to remove build output.
+This will build the executable in `bin/shell`, with object files in `obj/`.
+`make clean` removes the build output.
 
 ### Execution
 ```bash
-./bin/shell
+make run
 ```
-or `make run`.
-
-## Extra Credit
-
-<!-- Extra credit only counts if it is documented here. Describe each one you finish. -->
-
-- **Unlimited pipes**: TODO
-- **Piping + I/O redirection**: TODO
-- **Shell-ception**: TODO
+This will run the shell. It can also be started directly with `./bin/shell`.
 
 ## Development Log
-
 Each member records their contributions here.
 
 ### Pedro De Lana
 
 | Date       | Work Completed / Notes |
 |------------|------------------------|
-| 2026-09-28 | Added pipe helpers to `execute.c` (Parts 5 & 7): `close_pipes()` and `run_child()`, which connects each child to its neighboring pipes, applies redirection, and execs. |
-| 2026-09-28 | Implemented `exec_command()` (Part 5): runs the resolved path with `execv()`, keeping the typed name as `argv[0]`; on failure prints `<cmd>: <error>` and exits with `_exit()`. |
+| 2026-09-28 | Added pipe helpers `close_pipes()` and `run_child()` to `execute.c` (Parts 5 & 7). |
+| 2026-09-28 | Implemented `exec_command()` with `execv()` (Part 5). |
+| 2026-09-28 | Cleaned up source comments; restructured README to the course template. |
 
 ### Jimmy Moreno
 
@@ -134,14 +125,36 @@ Each member records their contributions here.
 
 | Date       | Work Completed / Notes |
 |------------|------------------------|
-|  2026-09-27 | Completed prompt.c and path_search.c|
+| 2026-09-27 | Completed `prompt.c` and `path_search.c` (Parts 1 & 4). |
 
 ## Meetings
+Document in-person meetings, their purpose, and what was discussed.
 
 | Date       | Attendees | Topics Discussed | Outcomes / Decisions |
 |------------|-----------|------------------|----------------------|
-| YYYY-MM-DD | | | |
+| YYYY-MM-DD | [Names]   | [Agenda items]   | [Actions/Next steps] |
 
 ## Bugs
-
 - None known yet.
+
+Unfinished portions (as of 2026-09-28):
+- `run_pipeline()` (Parts 5 & 7): prints "external commands not implemented yet".
+- `expand_tilde()` (Part 3): returns the token unchanged.
+- `cd`, command history, and `exit`'s last-three-commands output (Part 9).
+- Background job table in `jobs.c` (Part 8).
+
+## Extra Credit
+- **Extra Credit 1:**: Unlimited number of pipes (not finished yet)
+- **Extra Credit 2:**: Piping and I/O redirection combined (not finished yet)
+- **Extra Credit 3:**: Shell-ception (not finished yet)
+
+## Considerations
+- An unset variable (e.g. `echo $NOPE`) expands to nothing and its token is dropped, as in bash.
+- If `$MACHINE` is not set, the prompt falls back to `gethostname()`.
+- Output files from `>` are always left with permissions `-rw-------`, even if they already
+  existed.
+
+### Use of AI
+- **Pedro De Lana**: Used Claude Code to add `exec_command()` and the pipe helpers to
+  `execute.c`, clean up source comments, and format this README. All generated code was
+  reviewed and understood before committing.

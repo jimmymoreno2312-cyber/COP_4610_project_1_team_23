@@ -1,6 +1,4 @@
-/*
- * main.c - the shell's read / expand / parse / execute loop.
- */
+/* main.c - the shell's read / expand / parse / execute loop. */
 #include <stdlib.h>
 
 #include "builtins.h"

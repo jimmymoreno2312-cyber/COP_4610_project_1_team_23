@@ -1,6 +1,4 @@
-/*
- * lexer.c - Part 0: reading input and splitting it into tokens.
- */
+/* lexer.c - reads input and splits it into tokens. */
 #include "lexer.h"
 
 #include <stdio.h>

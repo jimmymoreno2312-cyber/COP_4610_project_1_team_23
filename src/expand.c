@@ -1,6 +1,6 @@
 /*
- * expand.c - Part 2: Environment Variables (owner: Jimmy, support: Sarah)
- *            Part 3: Tilde Expansion       (owner: Pedro, support: Jimmy)
+ * expand.c - Part 2: Environment Variables
+ *            Part 3: Tilde Expansion
  */
 #include "expand.h"
 
@@ -42,9 +42,5 @@ char *expand_env_var(const char *token)
 
 char *expand_tilde(const char *token)
 {
-    /*
-     * TODO(Pedro): replace the leading "~" with getenv("HOME").
-     *  "~" -> "/home/you", "~/dir1" -> "/home/you/dir1".
-     */
     return strdup(token);
 }

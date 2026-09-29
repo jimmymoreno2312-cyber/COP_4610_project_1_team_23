@@ -1,7 +1,4 @@
-/*
- * redirect.c - Part 6: I/O Redirection
- * Owner: Jimmy (support: Sarah)
- */
+/* redirect.c - Part 6: I/O Redirection */
 #include "redirect.h"
 
 #include <errno.h>

@@ -1,7 +1,4 @@
-/*
- * prompt.c - Part 1: Prompt
- * Owner: Sarah (support: Pedro)
- */
+/* prompt.c - Part 1: Prompt */
 #include "prompt.h"
 
 #include <stdio.h>
@@ -10,13 +7,6 @@
 
 void print_prompt(void)
 {
-    /*
-     * getenv("MACHINE") and getenv("PWD").
-     *  - $MACHINE may not be set everywhere; fall back to gethostname().
-     *  - Use getcwd() (or keep $PWD updated in cd) so the prompt is right after cd.
-     */
-
- // TODO(Sarah): print "USER@MACHINE:PWD> " using getenv("USER"),
      const char *user =getenv("USER"); 
      const char *machine =getenv("MACHINE"); 
      char host[256] = "unknown"; 
@@ -32,7 +22,7 @@ void print_prompt(void)
         machine = host; 
      }  
      
-     // Use getcwd(), make sure prompt is right after cd 
+     // getcwd() instead of $PWD so the prompt is right after cd
         if(!getcwd(cwd, sizeof cwd))
         {
             snprintf(cwd, sizeof cwd, "?"); 
