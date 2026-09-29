@@ -29,7 +29,7 @@ piping, background jobs, and the built-ins `exit`, `cd`, and `jobs`.
 
 ### Part 5: External Command Execution
 - **Responsibilities**: Run external commands with `fork()` and `execv()`.
-- **Assigned to**: Pedro, Jimmy
+- **Assigned to**: Jimmy, Pedro
 
 ### Part 6: I/O Redirection
 - **Responsibilities**: Support `<` and `>` (output files created with `-rw-------`).
@@ -50,8 +50,12 @@ piping, background jobs, and the built-ins `exit`, `cd`, and `jobs`.
 ### Extra Credit
 - **Responsibilities**: Unlimited number of pipes; piping and I/O redirection combined;
   shell-ception (running the shell inside itself).
-- **Assigned to**: Jimmy (unlimited pipes), Jimmy and Sarah (piping + redirection),
-  Pedro (shell-ception)
+- **Assigned to**: Jimmy (all three), with Pedro testing shell-ception
+
+### Integration & Testing
+- **Responsibilities**: Combine the parts, test against the sample runs, fix issues found
+  in testing, and keep the README up to date.
+- **Assigned to**: Pedro, with Jimmy and Sarah
 
 ## File Listing
 ```
@@ -109,13 +113,13 @@ Each member records their contributions here.
 
 | Date       | Work Completed / Notes |
 |------------|------------------------|
-| 2026-09-28 | Added pipe helpers `close_pipes()` and `run_child()` to `execute.c` (Parts 5 & 7). |
-| 2026-09-28 | Implemented `exec_command()` with `execv()` (Part 5). |
+| 2026-09-28 | Worked with Jimmy on `exec_command()`, `close_pipes()`, and `run_child()` (Parts 5 & 7). |
 | 2026-09-28 | Cleaned up source comments; restructured README to the course template. |
 | 2026-09-28 | Implemented the background job table in `jobs.c` (Part 8). |
 | 2026-09-28 | Hooked background jobs into `run_pipeline()`: `&`-free job names, flush before fork. |
 | 2026-09-28 | Implemented tilde expansion (Part 3), `cd`, and `exit` history (Part 9). |
 | 2026-09-28 | Matched prompt and job output formats to the sample runs. |
+| 2026-09-28 | Tested all parts and extra credit; fixed issues found in testing; formatting. |
 
 ### Jimmy Moreno
 
@@ -139,8 +143,8 @@ Document in-person meetings, their purpose, and what was discussed.
 
 | Date       | Attendees | Topics Discussed | Outcomes / Decisions |
 |------------|-----------|------------------|----------------------|
-| 2026-09-20 | Pedro, Jimmy, Sarah | Weekly check-in (Sun 5 PM) | Reviewed progress; set next steps |
-| 2026-09-27 | Pedro, Jimmy, Sarah | Weekly check-in (Sun 5 PM) | Reviewed progress; set next steps |
+| 2026-09-20 | Pedro, Jimmy, Sarah | Sunday 5 PM: project requirements and part assignments | Each part given a lead and a support member (see Division of Labor) |
+| 2026-09-27 | Pedro, Jimmy, Sarah | Sunday 5 PM: progress on each part; setting up GitHub | Created the shared repository; rebalanced work so every part had support |
 
 ## Bugs
 - None known. All base features were tested locally (macOS); final testing is on linprog.
@@ -156,7 +160,10 @@ Document in-person meetings, their purpose, and what was discussed.
   `sort < in.txt | uniq -c | sort -rn > out.txt`. `run_child()` in `src/execute.c` keeps the
   files open only in the first and last commands. The parser in `src/command.c` rejects `<`
   after the first command and `>` before the last.
-- **Extra Credit 3:**: Shell-ception (not finished yet)
+- **Extra Credit 3: Shell-ception** (Jimmy, tested by Pedro): the shell can run itself, e.g. `./bin/shell` from
+  inside `bin/shell`, repeatedly. The nested shell is started like any external command
+  (the name contains `/`, so it is run directly with `fork()`/`execv()`), and the parent waits
+  on it with `waitpid()`. Typing `exit` in the inner shell returns to the outer one.
 
 ## Considerations
 - Output formats follow the posted sample runs: background start `[1] 12345`, completion
@@ -177,11 +184,15 @@ Document in-person meetings, their purpose, and what was discussed.
 ### Use of AI
 - **Pedro De Lana**: Used Claude Code as a learning aid to understand C and system calls
   (`fork`, `execv`, `dup2`, `waitpid`) more proficiently, and to partially assist in writing
-  code (the `execute.c` helpers, tilde expansion, `cd`, and `exit` history). It was
+  code (tilde expansion, `cd`, `exit` history, and the background job table). Worked together
+  with Jimmy on `exec_command()`, `close_pipes()`, and `run_child()` in `execute.c`. It was
   also used to clean up source comments and format this README. All generated code was
   reviewed and understood before committing.
 - **Jimmy Moreno**: Used Claude Code to generate the project skeleton (Makefile, lexer, parser,
-  and module stubs), environment variable expansion, I/O redirection, `exec_command()`, and
-  `run_pipeline()` with its pipe helpers (`close_pipes()` and `run_child()`), and extra
-  credits 1 and 2 (unlimited pipes; piping with I/O redirection). All generated code was
-  reviewed and tested before committing.
+  and module stubs), environment variable expansion, I/O redirection, `run_pipeline()`, and
+  extra credits 1 and 2 (unlimited pipes; piping with I/O redirection). Worked together with
+  Pedro on `exec_command()`, `close_pipes()`, and `run_child()` in `execute.c`. All generated
+  code was reviewed and tested before committing.
+- **Sarah Fieg**: Used ChatGPT to aid in understanding C and to help write the `$PATH` search
+  in `path_search.c` (splitting `$PATH` on `:` and checking each directory with `access()`).
+  All generated code was reviewed and understood before committing.

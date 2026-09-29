@@ -11,32 +11,32 @@ char *search_path(const char *cmd)
     if (strchr(cmd, '/') != NULL)
         return strdup(cmd);
 
-      char *path = getenv("PATH"); 
-        if(path == NULL)
-            return NULL; 
+    char *path = getenv("PATH");
+    if (path == NULL)
+        return NULL;
 
-     // Work on a copy because strtok modifies its input
-        char *copy = strdup(path);
-        if(copy == NULL)
-            return NULL; 
+    // Work on a copy because strtok modifies its input
+    char *copy = strdup(path);
+    if (copy == NULL)
+        return NULL;
 
-        char full[1024]; 
-        char *dir = strtok(copy, ":"); 
+    char full[1024];
+    char *dir = strtok(copy, ":");
 
     // Build "dir/cmd" for each $PATH directory and return the first executable one
-    while( dir != NULL)
+    while (dir != NULL)
     {
-        snprintf(full, sizeof full, "%s/%s", dir, cmd); 
+        snprintf(full, sizeof full, "%s/%s", dir, cmd);
 
-        if(access(full, X_OK) == 0)
+        if (access(full, X_OK) == 0)
         {
             free(copy);
-            return strdup(full); 
+            return strdup(full);
         }
-        
-        dir = strtok(NULL, ":"); 
+
+        dir = strtok(NULL, ":");
     }
 
-    free(copy); 
+    free(copy);
     return NULL;    // not found; the caller prints "command not found"
 }
