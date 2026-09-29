@@ -170,3 +170,7 @@ Document in-person meetings, their purpose, and what was discussed.
   code (the `execute.c` helpers, tilde expansion, `cd`, and `exit` history). It was
   also used to clean up source comments and format this README. All generated code was
   reviewed and understood before committing.
+- **Jimmy Moreno**: Used Claude Code to generate the project skeleton (Makefile, lexer, parser,
+  and module stubs), environment variable expansion, I/O redirection, `exec_command()`, and
+  `run_pipeline()` with its pipe helpers (`close_pipes()` and `run_child()`). All generated
+  code was reviewed and tested before committing.
